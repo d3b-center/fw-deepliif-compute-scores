@@ -45,7 +45,7 @@ print(f''' ******* Using the following settings ********
 orig =  tiff.imread(image_path)
 file_extension = pathlib.Path(seg_path).suffix
 if file_extension == '.png':
-    img = iio.imread(seg_path)
+    seg = iio.imread(seg_path)
 else:
     seg = tiff.imread(seg_path) # omg.tiff for WSI
 

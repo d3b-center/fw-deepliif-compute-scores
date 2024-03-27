@@ -6,12 +6,12 @@
   "maintainer": "D3b-TIRU <flywheel@d3b.center>",
   "url": "https://github.com/nadeemlab/DeepLIIF/tree/main",
   "source": "https://github.com/d3b-center/deepliif-compute-scores", 
-  "version": "0.0.1",
+  "version": "0.0.1-1",
   "license": "Apache-2.0",
   "custom": {
     "gear-builder": {
       "category": "analysis",
-      "image": "chop.flywheel.io/deepliif-compute-scores:0.0.1"
+      "image": "chop.flywheel.io/deepliif-compute-scores:0.0.1-1"
     },
     "flywheel": {
       "suite": "DeepLIIF"
