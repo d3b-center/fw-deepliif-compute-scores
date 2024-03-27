@@ -1,0 +1,6 @@
+.DS_Store
+DeepLIIF_Latest*
+config.json
+*.tif*
+*.svs*
+__pycache__
