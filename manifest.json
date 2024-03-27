@@ -1,0 +1,74 @@
+{
+  "name": "deepliif-compute-scores",
+  "label": "DeepLIIF - extract scores from IHC prediction",
+  "description": "This package calculates IHC scores derived from the DeepLIIF algorithm.",
+  "author": "D3b-TIRU",
+  "maintainer": "D3b-TIRU <flywheel@d3b.center>",
+  "url": "https://github.com/nadeemlab/DeepLIIF/tree/main",
+  "source": "https://github.com/d3b-center/deepliif-compute-scores", 
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "custom": {
+    "gear-builder": {
+      "category": "analysis",
+      "image": "chop.flywheel.io/deepliif-compute-scores:0.0.0"
+    },
+    "flywheel": {
+      "suite": "DeepLIIF"
+    }
+  },
+  "inputs": {
+    "image": {
+      "base": "file",
+      "description": "Digital slide image",
+      "optional": false
+    },
+    "refined-segmentation": {
+      "base": "file",
+      "description": "Refined segmentation file output by deepliif-predict",
+      "optional": false
+    },
+    "marker": {
+      "base": "file",
+      "description": "Marker file output by deepliif-predict",
+      "optional": true
+    }
+  },
+  "config": {
+    "seg_thresh": {
+      "description": "The (probability) threshold used to classify the pixels in the final segmentation (Default = 150).",
+      "type": "integer",
+      "default":150
+    },
+    "size_thresh": {
+      "description": "Lower size threshold in pixels. Only include cells larger than this count (Default = auto).",
+      "type": "string",
+      "default":"auto"
+    },
+    "size_thresh_upper": {
+      "description": "Upper size threshold in pixels, or None. Only include cells smaller than this count (Default = None).",
+      "type": "string",
+      "default":"None"
+    },
+    "marker_thresh": {
+      "description": "Marker threshold, if 'auto' determines based on distribution of values in marker image (default: auto).",
+      "type": "string",
+      "default":"auto"
+    },
+    "resolution": {
+      "description": "Magnification level to use if size_thresh=auto (default: None = 40x, allowed values = '20x' or '10x').",
+      "type": "string",
+      "default":"None"
+    }
+  },
+  "environment":{
+    "HOME":"/root",
+    "HOSTNAME":"0b633f948575",
+    "MESA_GL_VERSION_OVERRIDE":"3.2",
+    "PATH":"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "QT_GRAPHICSSYSTEM":"native",
+    "QT_X11_NO_MITSHM":"1",
+    "SHLVL":"1",
+    "TERM":"xterm"
+  }
+}

@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+#	template based on:  https://github.com/scitran-apps/fsl-bet/blob/master/run
+#
+#
+
+CONTAINER="[deepliif-compute-scores]"
+echo -e "$CONTAINER  Initiated"
+
+###############################################################################
+## Built to flywheel-v0 spec.
+FLYWHEEL_BASE=/flywheel/v0
+OUTPUT_DIR=$FLYWHEEL_BASE/output
+im_DIR=$FLYWHEEL_BASE/input/image
+seg_DIR=$FLYWHEEL_BASE/input/refined-segmentation
+marker_DIR=$FLYWHEEL_BASE/input/marker
+MANIFEST=$FLYWHEEL_BASE/manifest.json
+CONFIG_FILE=$FLYWHEEL_BASE/config.json
+
+###############################################################################
+## Configure the ENV
+export USER=Flywheel
+
+###############################################################################
+## Execute the main processes
+function jsonValue() {
+KEY=$1
+num=$2
+awk -F"[,:}]" '{for(i=1;i<=NF;i++){if($i~/'$KEY'\042/){print $(i+1)}}}' | tr -d '"' | sed -n ${num}p
+}
+
+## get all user configurations
+if [[ -f $CONFIG_FILE ]]; then # if there's a user config file, use it, otherwise use manifest defaults
+  echo "$CONTAINER  $CONFIG_FILE found. Loading config..."
+  seg_thresh="$(cat $CONFIG_FILE | jsonValue seg_thresh)"
+  size_thresh="$(cat $CONFIG_FILE | jsonValue size_thresh)"
+  size_thresh_upper="$(cat $CONFIG_FILE | jsonValue size_thresh_upper)"
+  marker_thresh="$(cat $CONFIG_FILE | jsonValue marker_thresh)"
+  resolution="$(cat $CONFIG_FILE | jsonValue resolution)"
+
+else
+  echo "$CONTAINER  $CONFIG_FILE not found. Loading defaults from $MANIFEST..."
+  seg_thresh="$(cat $MANIFEST | jsonValue seg_thresh default)"
+  size_thresh="$(cat $MANIFEST | jsonValue size_thresh default)"
+  size_thresh_upper="$(cat $MANIFEST | jsonValue size_thresh_upper default)"
+  marker_thresh="$(cat $MANIFEST | jsonValue marker_thresh default)"
+  resolution="$(cat $MANIFEST | jsonValue resolution default)"
+
+fi
+
+## Find the input files
+im_file=$(find $im_DIR/* -maxdepth 0 -type f)
+seg_file=$(find $seg_DIR/* -maxdepth 0 -type f)
+
+## If necessary input files are found, run the thing
+if [[ -f $im_file ]] && [[ -f $seg_file ]]; then
+
+  if [[ ! -d $OUTPUT_DIR ]] ; then
+    mkdir $OUTPUT_DIR
+  fi
+
+  python3.8 deepliif_getScores.py $im_DIR $seg_DIR $marker_DIR $seg_thresh $size_thresh $size_thresh_upper $marker_thresh $resolution $OUTPUT_DIR
+
+################# Finish up #################
+  STATUS=$?
+else
+  echo "$CONTAINER  Input files not found!"
+  exit 1
+fi
+
+# Check exit status
+if [[ $STATUS == 0 ]]
+  then
+    echo -e "$CONTAINER  Done!"
+
+  else
+    echo "$CONTAINER  command returned a non-zero exit code = [$STATUS]."
+    exit 1
+fi
+
+exit 0
