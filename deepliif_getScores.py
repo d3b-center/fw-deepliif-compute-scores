@@ -4,10 +4,12 @@
 # from deepliif.postprocessing import compute_results
 from compute_functions import compute_results
 import tifffile as tiff
+import imageio as iio
 import pandas as pd
 
 import sys
 from glob import glob
+import pathlib
 
 im_dir = sys.argv[1]
 seg_dir = sys.argv[2]
@@ -41,7 +43,11 @@ print(f''' ******* Using the following settings ********
         ''')
 
 orig =  tiff.imread(image_path)
-seg = tiff.imread(seg_path)
+file_extension = pathlib.Path(seg_path).suffix
+if file_extension == '.png':
+    img = iio.imread(seg_path)
+else:
+    seg = tiff.imread(seg_path) # omg.tiff for WSI
 
 if size_thresh != 'auto':
     size_thresh = int(size_thresh)

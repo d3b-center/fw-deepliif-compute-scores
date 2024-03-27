@@ -3,3 +3,4 @@ pandas==1.4.2
 numba==0.53.1
 tifffile==2023.7.10
 imagecodecs==2023.3.16
+imageio==2.10.1
